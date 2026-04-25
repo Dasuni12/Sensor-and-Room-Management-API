@@ -40,7 +40,7 @@ public class SensorResource {
     }
 
 
-     //Creates a new sensor
+    //Creates a new sensor
 
     @POST
     public Response createSensor(Sensor sensor) {
@@ -74,7 +74,26 @@ public class SensorResource {
         return Response.status(Response.Status.CREATED).entity(sensor).build();
     }
 
-     //sub-resource locator for sensor readings.
+    //Gets a specific sensor by ID
+
+    @GET
+    @Path("/{sensorId}")
+    public Response getSensor(@PathParam("sensorId") String sensorId) {
+        // Look up the sensor in DataStore
+        Sensor sensor = DataStore.sensors.get(sensorId);
+
+        // If not found, return 404
+        if (sensor == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("{\"error\": \"Sensor not found: " + sensorId + "\"}")
+                    .build();
+        }
+
+        // Found! Return HTTP 200 OK with the sensor
+        return Response.ok(sensor).build();
+    }
+
+    //sub-resource locator for sensor readings
 
     @Path("/{sensorId}/readings")
     public SensorReadingResource getReadingsResource(@PathParam("sensorId") String sensorId) {
